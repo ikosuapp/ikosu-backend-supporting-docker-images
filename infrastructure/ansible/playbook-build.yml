@@ -1,0 +1,39 @@
+---
+- name: Play for creating project build
+  hosts: all
+
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+      become: true
+
+    - name: Install locales
+      ansible.builtin.apt:
+        pkg: locales
+      become: true
+
+    - name: Ensure a locale exists
+      community.general.locale_gen:
+        name: en_US.UTF-8
+        state: present
+      become: true
+
+    - name: Set default locale
+      ansible.builtin.lineinfile:
+        dest: "/etc/default/locale"
+        line: "LANG=en_US.UTF-8"
+      become: true
+
+  roles:
+    - python
+    - pipx
+    - ansible
+    - ansible-lint
+    - shellcheck
+    - tox
+    - postgresql
+    - terraform
+    - gcloud
+    - docker
+    - packer

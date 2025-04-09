@@ -1,0 +1,25 @@
+- name: Download HashiCorp GPG key
+  ansible.builtin.get_url:
+    url: https://apt.releases.hashicorp.com/gpg
+    dest: /tmp/hashicorp-archive-keyring.gpg
+    mode: '0644'
+  become: true
+
+- name: Convert HashiCorp GPG key to binary format
+  ansible.builtin.command:
+    cmd: "sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg /tmp/hashicorp-archive-keyring.gpg"
+  args:
+    creates: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  become: true
+
+- name: Add HashiCorp APT repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    state: present
+  become: true
+
+- name: Install packer
+  ansible.builtin.apt:
+    name: packer=1.12.0*
+    state: present
+  become: true

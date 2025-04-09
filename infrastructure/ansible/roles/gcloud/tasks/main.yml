@@ -1,0 +1,22 @@
+- name: Install required packages
+  ansible.builtin.apt:
+    name: apt-transport-https,ca-certificates,curl,gnupg2
+  become: true
+
+- name: Add gcloud apt key
+  ansible.builtin.apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    keyring: /usr/share/keyrings/cloud.google.gpg
+  become: true
+
+- name: Install gcloud apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main"
+    state: present
+  become: true
+
+- name: Install gcloud
+  ansible.builtin.apt:
+    name: google-cloud-cli
+    update_cache: true
+  become: true

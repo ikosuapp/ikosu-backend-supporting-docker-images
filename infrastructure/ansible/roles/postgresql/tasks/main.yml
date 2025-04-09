@@ -1,0 +1,35 @@
+- name: Install Postgres
+  ansible.builtin.apt:
+    pkg: postgresql,postgresql-contrib
+  become: true
+
+- name: Install psycopg dependencies
+  ansible.builtin.apt:
+    pkg: python3-dev,libpq-dev,gcc
+  become: true
+
+- name: Give permissions to /var/run
+  ansible.builtin.file:
+    path: /var/run
+    mode: o+w
+  become: true
+
+- name: Trust socket connects
+  ansible.builtin.lineinfile:
+    path: /etc/postgresql/15/main/pg_hba.conf
+    regexp: "^local.*all.*all.*peer$"
+    line: "local   all             all                                     trust"
+  become: true
+
+- name: Trust remote connections
+  ansible.builtin.lineinfile:
+    path: /etc/postgresql/15/main/pg_hba.conf
+    line: "hostnossl    all          all            0.0.0.0/0  trust"
+  become: true
+
+- name: Listen for remote connections
+  ansible.builtin.replace:
+    path: /etc/postgresql/15/main/postgresql.conf
+    regexp: "#listen_addresses = 'localhost'"
+    replace: "listen_addresses = '*'"
+  become: true

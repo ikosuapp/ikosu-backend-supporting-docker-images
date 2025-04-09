@@ -1,0 +1,19 @@
+- name: Download Terraform installation resource
+  ansible.builtin.get_url:
+    url: https://releases.hashicorp.com/terraform/1.8.5/terraform_1.8.5_linux_amd64.zip
+    dest: /tmp/terraform_1.8.5.zip
+    mode: "0644"
+
+- name: Unarchive Terraform
+  ansible.builtin.unarchive:
+    src: /tmp/terraform_1.8.5.zip
+    remote_src: true
+    dest: /tmp
+
+- name: Install Terraform
+  ansible.builtin.copy:
+    src: /tmp/terraform
+    dest: /usr/local/bin
+    remote_src: true
+    mode: "0755"
+  become: true

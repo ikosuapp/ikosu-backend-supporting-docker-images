@@ -1,0 +1,55 @@
+---
+- name: Play for creating project development environment
+  hosts: all
+
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+      become: true
+
+    - name: Install locales
+      ansible.builtin.apt:
+        pkg: locales
+      become: true
+
+    - name: Ensure a locale exists
+      community.general.locale_gen:
+        name: en_US.UTF-8
+        state: present
+      become: true
+
+    - name: Set default locale
+      ansible.builtin.lineinfile:
+        dest: "/etc/default/locale"
+        line: "LANG=en_US.UTF-8"
+      become: true
+
+  roles:
+    - python
+    - pipx
+    - ansible
+    - ansible-lint
+    - shellcheck
+    - pyscaffold
+    - tox
+    - postgresql
+    - terraform
+    - gcloud
+    - docker
+    - packer
+
+  post_tasks:
+    - name: Add postgres group for user
+      ansible.builtin.user:
+        name: vagrant
+        groups: postgres
+        append: true
+      become: true
+
+    - name: Add docker group for user
+      ansible.builtin.user:
+        name: vagrant
+        groups: docker
+        append: true
+      become: true
