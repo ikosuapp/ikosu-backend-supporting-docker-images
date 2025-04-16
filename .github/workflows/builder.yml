@@ -11,6 +11,7 @@ on:
       - infrastructure/ansible/playbook-build.yml
       - infrastructure/ansible/roles/**
       - bin/create-image
+      - build.sh
   schedule:
     - cron: 0 9 * * *
 

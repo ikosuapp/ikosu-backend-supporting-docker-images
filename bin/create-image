@@ -4,7 +4,9 @@ image=$1 &&
 architecture=$2 &&
 
 if [ -z "$architecture" ]; then
+  packer init "infrastructure/packer/${image}.pkr.hcl" &&
   packer build -color=false "infrastructure/packer/${image}.pkr.hcl"
 else
+  packer init "infrastructure/packer/${image}.pkr.hcl" &&
   packer build -only="docker.${architecture}" -color=false "infrastructure/packer/${image}.pkr.hcl"
 fi
